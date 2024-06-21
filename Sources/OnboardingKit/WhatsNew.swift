@@ -13,6 +13,7 @@ import SwiftUI
 /// What's new
 /// 
 /// A view to show the what's new screen.
+@available(iOS 15.0, macOS 12.0, *)
 struct WhatsNew: View {
     /// Should the view be shown
     @Binding
@@ -70,7 +71,7 @@ struct WhatsNew: View {
             Button(action: {
                 self.closeAction?()
                 self.show = false
-            }) {
+            }, label: {
                 HStack {
                     Spacer()
                     Text("Continue")
@@ -78,7 +79,7 @@ struct WhatsNew: View {
                         .foregroundColor(.white)
                     Spacer()
                 }
-            }
+            })
             .frame(height: 50)
             .background(Color.blue)
             .cornerRadius(15)

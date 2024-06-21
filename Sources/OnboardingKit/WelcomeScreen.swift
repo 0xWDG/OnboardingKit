@@ -20,6 +20,7 @@ import AppKit
 /// WelcomeScreen
 /// 
 /// The welcome screen for your app.
+@available(iOS 15.0, macOS 12.0, *)
 public struct WelcomeScreen: View {
     @Binding var show: Bool
 
@@ -110,7 +111,7 @@ public struct WelcomeScreen: View {
             Button(action: {
                 self.closeAction?()
                 self.show = false
-            }) {
+            }, label: {
                 HStack {
                     Spacer()
                     Text("Continue")
@@ -118,7 +119,7 @@ public struct WelcomeScreen: View {
                         .foregroundColor(.white)
                     Spacer()
                 }
-            }
+            })
             .frame(height: 50)
             .background(Color.blue)
             .cornerRadius(15)
