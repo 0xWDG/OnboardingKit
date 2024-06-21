@@ -30,7 +30,7 @@ public struct WhatsNew: View {
 
     /// Helper class to get the App icon, name, version and build number.
     private let helper = OnboardingKitHelper()
-    
+
     /// What's new
     ///
     /// A view to show the what's new screen.
