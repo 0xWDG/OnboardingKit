@@ -14,7 +14,7 @@ import SwiftUI
 /// 
 /// A view to show the what's new screen.
 @available(iOS 15.0, macOS 12.0, *)
-struct WhatsNew: View {
+public struct WhatsNew: View {
     /// Should the view be shown
     @Binding
     var show: Bool
@@ -30,9 +30,29 @@ struct WhatsNew: View {
 
     /// Helper class to get the App icon, name, version and build number.
     private let helper = OnboardingKitHelper()
-
+    
+    /// What's new
+    ///
+    /// A view to show the what's new screen.
+    ///
+    /// - Parameters:
+    ///   - show: Is the view shown
+    ///   - text: Text to show
+    ///   - isDismissable: is dismissable
+    ///   - closeAction: action to run on dismiss
+    public init(
+        show: Binding<Bool>,
+        text: String,
+        isDismissable: Bool = true,
+        closeAction: (() -> Void)? = nil
+    ) {
+        self._show = show
+        self.text = text
+        self.isDismissable = isDismissable
+        self.closeAction = closeAction
+    }
     /// The view body
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 10) {
                 if let image = helper.getAppIcon() {
