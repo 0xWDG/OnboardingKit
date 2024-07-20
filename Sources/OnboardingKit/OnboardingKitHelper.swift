@@ -20,7 +20,7 @@ import AppKit
 /// OnboardingKit helper class
 package class OnboardingKitHelper {
 
-    /// <#Description#>
+    /// OnboardingKit helper class
     public init() {
 
     }

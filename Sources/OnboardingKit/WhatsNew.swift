@@ -11,7 +11,7 @@
 import SwiftUI
 
 /// What's new
-/// 
+///
 /// A view to show the what's new screen.
 @available(iOS 15.0, macOS 12.0, *)
 public struct WhatsNew: View {
@@ -103,7 +103,9 @@ public struct WhatsNew: View {
             .frame(height: 50)
             .background(Color.blue)
             .cornerRadius(15)
+#if os(iOS) || os(macOS)
             .keyboardShortcut(isDismissable ? .defaultAction : .cancelAction)
+#endif
         }
         .padding()
         .interactiveDismissDisabled(!isDismissable)
