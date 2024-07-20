@@ -23,22 +23,22 @@ import AppKit
 @available(iOS 15.0, macOS 12.0, *)
 public struct WelcomeScreen: View {
     @Binding var show: Bool
-    
+
     /// Welcome screen title
     var title = "Welcome to %APP_NAME%"
-    
+
     /// Welcome screen items
     var items: [WelcomeCell]
-    
+
     /// Is the welcome screen dismissable
     var isDismissable: Bool = true
-    
+
     /// Action to perform when the welcome screen is closed
     var closeAction: (() -> Void)?
-    
+
     /// Helper class to get the App icon, name, version and build number.
     let helper = OnboardingKitHelper()
-    
+
     /// WelcomeScreen
     ///
     /// Create a new WelcomeScreen
@@ -61,7 +61,7 @@ public struct WelcomeScreen: View {
         self.items = items
         self.isDismissable = isDismissable
         self.closeAction = closeAction
-        
+
         if items.isEmpty {
             self.items = [
                 WelcomeCell(
@@ -79,7 +79,7 @@ public struct WelcomeScreen: View {
             ]
         }
     }
-    
+
     /// The view body
     public var body: some View {
         VStack {
@@ -97,17 +97,17 @@ public struct WelcomeScreen: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 48)
             Spacer()
-            
+
             VStack(spacing: 24) {
                 ForEach(items, id: \.title) { item in
                     item
                 }
             }
             .padding(.leading)
-            
+
             Spacer()
             Spacer()
-            
+
             Button(action: {
                 self.closeAction?()
                 self.show = false

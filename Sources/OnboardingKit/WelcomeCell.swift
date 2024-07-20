@@ -14,25 +14,25 @@ import SwiftUI
 /// 
 /// A cell for the welcome screen.
 public struct WelcomeCell: View {
-    
+
     /// SF Symbol name
     var image: String
-    
+
     /// Row title
     var title: String
-    
+
     /// Row subtitle
     var subtitle: String
-    
+
     /// SF Symbol color
     var color: Color = .accentColor
-    
+
     /// SF Symbol rendering mode
     var renderingMode: Image.TemplateRenderingMode?
-    
+
     /// Helper class to replace variables
     let helper = OnboardingKitHelper()
-    
+
     /// WelcomeCell
     /// 
     /// Create a new WelcomeCell
@@ -51,13 +51,13 @@ public struct WelcomeCell: View {
         self.image = image
         self.title = title
         self.subtitle = subtitle
-        
+
         if let color = color {
             self.color = color
             self.renderingMode = .template
         }
     }
-    
+
     /// The view body
     public var body: some View {
         HStack(spacing: 24) {
@@ -67,17 +67,17 @@ public struct WelcomeCell: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 32)
                 .foregroundColor(color)
-            
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(.init(helper.replaceVariables(in: title)))
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                
+
                 Text(.init(helper.replaceVariables(in: subtitle)))
                     .foregroundColor(.secondary)
                     .font(.subheadline)
             }
-            
+
             Spacer()
         }
         .padding()
