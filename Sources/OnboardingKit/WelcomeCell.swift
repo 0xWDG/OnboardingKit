@@ -70,6 +70,7 @@ public struct WelcomeCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(.init(helper.replaceVariables(in: title)))
+                    .foregroundColor(.primary)
                     .font(.subheadline)
                     .fontWeight(.semibold)
 
@@ -82,7 +83,7 @@ public struct WelcomeCell: View {
         }
         .padding()
 #if !os(visionOS)
-        .background(.ultraThinMaterial)
+        .background(.thickMaterial)
 #endif
         .clipShape(.rect(cornerRadius: 8))
     }

@@ -28,6 +28,10 @@ public struct WhatsNew: View {
     /// Action to perform when the view is closed
     var closeAction: (() -> Void)?
 
+    /// Can we continue?
+    @State
+    var canContinue: Bool = false
+
     /// Helper class to get the App icon, name, version and build number.
     private let helper = OnboardingKitHelper()
 
@@ -43,7 +47,7 @@ public struct WhatsNew: View {
     public init(
         show: Binding<Bool>,
         text: String,
-        isDismissable: Bool = true,
+        isDismissable: Bool = false,
         closeAction: (() -> Void)? = nil
     ) {
         self._show = show
@@ -55,13 +59,11 @@ public struct WhatsNew: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 10) {
-                if let image = helper.getAppIcon() {
-                    image
+                helper.getAppIcon()
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .frame(width: 82, height: 82)
-                }
 
                 VStack(alignment: .leading) {
                     Text(helper.getAppName())
@@ -80,8 +82,11 @@ public struct WhatsNew: View {
                 .padding(14)
 
             ScrollView {
-                VStack(spacing: 24) {
+                LazyVStack(alignment: .leading, spacing: 24) {
                     Text(.init(text))
+                    Text("").onAppear {
+                        self.canContinue = true
+                    }
                 }
             }
             .padding(.leading)
@@ -100,15 +105,22 @@ public struct WhatsNew: View {
                     Spacer()
                 }
             })
+            .disabled(!canContinue)
             .frame(height: 50)
-            .background(Color.blue)
+            .background(canContinue ? Color.blue : Color.gray)
             .cornerRadius(15)
 #if os(iOS) || os(macOS)
-            .keyboardShortcut(isDismissable ? .defaultAction : .cancelAction)
+            .keyboardShortcut(canContinue ? .defaultAction : .cancelAction)
 #endif
         }
         .padding()
-        .interactiveDismissDisabled(!isDismissable)
+        .interactiveDismissDisabled(!canContinue)
+        .onAppear {
+            if isDismissable {
+                // View is dismissable so we can continue
+                canContinue = true
+            }
+        }
     }
 }
 
