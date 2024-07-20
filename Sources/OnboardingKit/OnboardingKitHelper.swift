@@ -60,7 +60,7 @@ package class OnboardingKitHelper {
 
     /// Get application icon
     /// - Returns: Application icon
-    public func getAppIcon() -> Image? {
+    public func getAppIcon() -> Image {
         guard let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
               let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
               let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
@@ -70,18 +70,18 @@ package class OnboardingKitHelper {
 
 #if canImport(UIKit)
         guard let uiImage = UIImage(named: iconFileName) else {
-            return nil
+            return Image(systemName: "xmark.app")
         }
 
         return Image(uiImage: uiImage)
 #elseif canImport(AppKit)
         guard let nsImage = NSImage(named: iconFileName) else {
-            return nil
+            return Image(systemName: "xmark.app")
         }
 
         return Image(nsImage: nsImage)
 #else
-        return nil
+        return Image(systemName: "xmark.app")
 #endif
     }
 

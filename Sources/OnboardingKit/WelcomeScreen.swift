@@ -18,7 +18,7 @@ import AppKit
 #endif
 
 /// WelcomeScreen
-/// 
+///
 /// The welcome screen for your app.
 @available(iOS 15.0, macOS 12.0, *)
 public struct WelcomeScreen: View {
@@ -33,6 +33,10 @@ public struct WelcomeScreen: View {
     /// Is the welcome screen dismissable
     var isDismissable: Bool = true
 
+    /// Is the continue button available?
+    @State
+    var canContinue: Bool = false
+
     /// Action to perform when the welcome screen is closed
     var closeAction: (() -> Void)?
 
@@ -42,18 +46,18 @@ public struct WelcomeScreen: View {
     /// WelcomeScreen
     ///
     /// Create a new WelcomeScreen
-    /// 
+    ///
     /// - Parameters:
     ///   - show: Binding to show the welcome screen
     ///   - items: Items to show
     ///   - title: Custom title (default: "Welcome to %APP_NAME%")
-    ///   - isDismissable: Is the welcome screen dismissable (default: true)
+    ///   - isDismissable: Is the welcome screen dismissable (default: false)
     ///   - closeAction: Action to perform when the welcome screen is closed
     public init(
         show: Binding<Bool>,
         items: [WelcomeCell],
         title: String = "Welcome to %APP_NAME%",
-        isDismissable: Bool = true,
+        isDismissable: Bool = false,
         closeAction: ( () -> Void)? = nil
     ) {
         self._show = show
@@ -84,26 +88,37 @@ public struct WelcomeScreen: View {
     public var body: some View {
         VStack {
             Spacer()
-            if let appicon = helper.getAppIcon() {
-                appicon
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .frame(width: 82, height: 82)
-            }
+
+            helper.getAppIcon()
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .frame(width: 82, height: 82)
+                .padding(.top, 24)
+
             Text(.init(helper.replaceVariables(in: title)))
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
+                .padding(.top, 12)
                 .padding(.horizontal, 48)
-            Spacer()
+                .padding(.bottom, 24)
 
-            VStack(spacing: 24) {
-                ForEach(items, id: \.title) { item in
-                    item
+            ScrollView {
+                // Lazy scrollview lets us use .onAppear
+                // to look if we are at the last item to continue.
+                LazyVStack(spacing: 24) {
+                    ForEach(items, id: \.title) { item in
+                        item.onAppear {
+                            if item.title == items.last?.title {
+                                self.canContinue = true
+                            }
+                        }
+                    }
+                    
                 }
+                .padding(.leading)
             }
-            .padding(.leading)
 
             Spacer()
             Spacer()
@@ -120,17 +135,25 @@ public struct WelcomeScreen: View {
                     Spacer()
                 }
             })
+            .disabled(!canContinue)
             .frame(height: 50)
-            .background(Color.blue)
+            .background(canContinue ? Color.blue : Color.gray)
             .cornerRadius(15)
 #if os(iOS) || os(macOS)
-            .keyboardShortcut(isDismissable ? .defaultAction : .cancelAction)
+            .keyboardShortcut(canContinue ? .defaultAction : .cancelAction)
 #endif
+
         }
         .padding()
-        .interactiveDismissDisabled(!isDismissable)
+        .interactiveDismissDisabled(!canContinue)
         .background {
             Color.clear
+        }
+        .onAppear {
+            if isDismissable {
+                // View is dismissable, so we can always continue
+                canContinue = true
+            }
         }
     }
 }

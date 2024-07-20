@@ -55,13 +55,11 @@ public struct WhatsNew: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 10) {
-                if let image = helper.getAppIcon() {
-                    image
+                helper.getAppIcon()
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .frame(width: 82, height: 82)
-                }
 
                 VStack(alignment: .leading) {
                     Text(helper.getAppName())
