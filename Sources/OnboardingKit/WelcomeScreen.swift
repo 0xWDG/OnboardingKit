@@ -115,7 +115,7 @@ public struct WelcomeScreen: View {
                             }
                         }
                     }
-                    
+
                 }
                 .padding(.leading)
             }
