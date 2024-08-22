@@ -28,9 +28,16 @@ package class OnboardingKitHelper {
     /// Get application name
     /// - Returns: application name
     public func getAppName() -> String {
+        dump(Bundle.main.infoDictionary)
+
         if let dictionary = Bundle.main.infoDictionary,
-           let dVersion = dictionary["CFBundleDisplayName"] as? String {
-            return dVersion
+           let dName = dictionary["CFBundleDisplayName"] as? String {
+            return dName
+        }
+
+        if let dictionary = Bundle.main.infoDictionary,
+           let dName = dictionary["CFBundleName"] as? String {
+            return dName
         }
 
         return "Unknown"
