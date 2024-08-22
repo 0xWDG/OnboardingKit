@@ -27,7 +27,7 @@ package class OnboardingKitHelper {
 
     /// Get application name
     /// - Returns: application name
-    public func getAppName() -> String {
+    public var appName: String {
         if let dictionary = Bundle.main.infoDictionary,
            let dName = dictionary["CFBundleDisplayName"] as? String {
             return dName
@@ -43,7 +43,7 @@ package class OnboardingKitHelper {
 
     /// Get application version number
     /// - Returns: application version number
-    public func getVersionNumber() -> String {
+    public var versionNumber: String {
         if let dictionary = Bundle.main.infoDictionary,
            let dVersion = dictionary["CFBundleShortVersionString"] as? String {
             return dVersion
@@ -54,7 +54,7 @@ package class OnboardingKitHelper {
 
     /// Get application build number
     /// - Returns: application build number
-    public func getBuildNumber() -> String {
+    public var buildNumber: String {
         if let dictionary = Bundle.main.infoDictionary,
            let dBuild = dictionary["CFBundleVersion"] as? String {
             return dBuild
@@ -65,7 +65,7 @@ package class OnboardingKitHelper {
 
     /// Get application icon
     /// - Returns: Application icon
-    public func getAppIcon() -> Image {
+    public var appIcon: Image {
         guard let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
               let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
               let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
@@ -90,19 +90,49 @@ package class OnboardingKitHelper {
 #endif
     }
 
+    private var deviceType: String {
+#if os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : "iphone"
+#elseif os(macOS)
+        return  "macbook"
+#elseif os(visionOS)
+        return "visionpro"
+#elseif os(tvOS)
+        return "appletv"
+#elseif os(watchOS)
+        return "applewatch"
+#endif
+    }
+
+    private var deviceTypeApps: String {
+#if os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .pad ? "apps.ipad" : "apps.iphone"
+#elseif os(macOS)
+        return  "macbook"
+#elseif os(visionOS)
+        return "visionpro"
+#elseif os(tvOS)
+        return "appletv"
+#elseif os(watchOS)
+        return "applewatch"
+#endif
+    }
+
     /// Replace variables in a string
-    /// 
+    ///
     /// Supported variables:
     /// - %APP_NAME%: Application name
     /// - %APP_VERSION%: Application version number
     /// - %APP_BUILD%: Application build number
-    /// 
+    ///
     /// - Parameter string: Input string
     /// - Returns: Transformed string
     public func replaceVariables(in string: String) -> String {
         return string
-            .replacingOccurrences(of: "%APP_NAME%", with: getAppName())
-            .replacingOccurrences(of: "%APP_VERSION%", with: getVersionNumber())
-            .replacingOccurrences(of: "%APP_BUILD%", with: getBuildNumber())
+            .replacingOccurrences(of: "%DEVICE_APPS%", with: deviceTypeApps)
+            .replacingOccurrences(of: "%DEVICE_TYPE%", with: deviceType)
+            .replacingOccurrences(of: "%APP_NAME%", with: appName)
+            .replacingOccurrences(of: "%APP_VERSION%", with: versionNumber)
+            .replacingOccurrences(of: "%APP_BUILD%", with: buildNumber)
     }
 }

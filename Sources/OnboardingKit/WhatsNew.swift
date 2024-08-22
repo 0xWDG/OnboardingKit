@@ -59,19 +59,19 @@ public struct WhatsNew: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 10) {
-                helper.getAppIcon()
+                helper.appIcon
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .frame(width: 82, height: 82)
 
                 VStack(alignment: .leading) {
-                    Text(helper.getAppName())
+                    Text(helper.appName)
                         .fontWeight(.bold)
-                    Text("Version: \(helper.getVersionNumber())")
+                    Text("Version: \(helper.versionNumber)")
                         .foregroundStyle(.secondary)
 
-                    Text("Build: \(helper.getBuildNumber())")
+                    Text("Build: \(helper.buildNumber)")
                         .foregroundStyle(.secondary)
                 }
             }

@@ -89,7 +89,7 @@ public struct WelcomeScreen: View {
         VStack {
             Spacer()
 
-            helper.getAppIcon()
+            helper.appIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 8))

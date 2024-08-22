@@ -101,6 +101,16 @@ struct TabbarView: View {
 }
 ```
 
+### Dynamic replacements in text
+
+|Key|Replacement|
+|---|---|
+|`%DEVICE_APPS%`|SF Device icon with apps name (if supported, only iPad and iPhone are supported at this moment)|
+|`%DEVICE_TYPE%`|SF Device icon name|
+|`%APP_NAME%`|The app's name|
+|`%APP_VERSION%`|The App's version number|
+|`%APP_BUILD%"`|The App's build number|
+
 ## Contact
 
 We can get in touch via [Twitter/X](https://twitter.com/0xWDG), [Discord](https://discordapp.com/users/918438083861573692), [Mastodon](https://mastodon.social/@0xWDG), [Email](mailto:email+oss@wesleydegroot.nl), [Website](https://wesleydegroot.nl).

@@ -61,7 +61,7 @@ public struct WelcomeCell: View {
     /// The view body
     public var body: some View {
         HStack(spacing: 24) {
-            Image(systemName: image)
+            Image(systemName: helper.replaceVariables(in: image))
                 .renderingMode(renderingMode)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
