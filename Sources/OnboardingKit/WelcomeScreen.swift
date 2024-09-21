@@ -24,9 +24,6 @@ import AppKit
 public struct WelcomeScreen: View {
     @Binding var show: Bool
 
-    /// Welcome screen title
-    var title = "Welcome to %APP_NAME%"
-
     /// Welcome screen items
     var items: [WelcomeCell]
 
@@ -50,18 +47,15 @@ public struct WelcomeScreen: View {
     /// - Parameters:
     ///   - show: Binding to show the welcome screen
     ///   - items: Items to show
-    ///   - title: Custom title (default: "Welcome to %APP_NAME%")
     ///   - isDismissable: Is the welcome screen dismissable (default: false)
     ///   - closeAction: Action to perform when the welcome screen is closed
     public init(
         show: Binding<Bool>,
         items: [WelcomeCell],
-        title: String = "Welcome to %APP_NAME%",
         isDismissable: Bool = false,
         closeAction: ( () -> Void)? = nil
     ) {
         self._show = show
-        self.title = title
         self.items = items
         self.isDismissable = isDismissable
         self.closeAction = closeAction
@@ -96,8 +90,8 @@ public struct WelcomeScreen: View {
                 .frame(width: 82, height: 82)
                 .padding(.top, 24)
 
-            Text(.init(helper.replaceVariables(in: title)))
-                .font(.largeTitle)
+            Text("Welcome to \(helper.appName)", bundle: .module)
+                .font(.title)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
                 .padding(.top, 12)
@@ -129,7 +123,7 @@ public struct WelcomeScreen: View {
             }, label: {
                 HStack {
                     Spacer()
-                    Text("Continue")
+                    Text("Continue", bundle: .module)
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
@@ -142,7 +136,6 @@ public struct WelcomeScreen: View {
 #if os(iOS) || os(macOS)
             .keyboardShortcut(canContinue ? .defaultAction : .cancelAction)
 #endif
-
         }
         .padding()
         .interactiveDismissDisabled(!canContinue)

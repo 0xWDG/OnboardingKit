@@ -95,7 +95,12 @@ struct TabbarView: View {
             WhatsNew(
                 show: $showWhatsNew,
                 text: "This is new!"
-            )
+            ) {
+                if let dictionary = Bundle.main.infoDictionary,
+                   let dVersion = dictionary["CFBundleShortVersionString"] as? String {
+                    UserDefaults.standard.setValue(dVersion, forKey: "whatsNew")
+                }
+            }
         }
     }
 }
@@ -103,13 +108,13 @@ struct TabbarView: View {
 
 ### Dynamic replacements in text
 
-|Key|Replacement|
-|---|---|
-|`%DEVICE_APPS%`|SF Device icon with apps name (if supported, only iPad and iPhone are supported at this moment)|
-|`%DEVICE_TYPE%`|SF Device icon name|
-|`%APP_NAME%`|The app's name|
-|`%APP_VERSION%`|The App's version number|
-|`%APP_BUILD%"`|The App's build number|
+| Key             | Replacement                                                                                     |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| `%DEVICE_APPS%` | SF Device icon with apps name (if supported, only iPad and iPhone are supported at this moment) |
+| `%DEVICE_TYPE%` | SF Device icon name                                                                             |
+| `%APP_NAME%`    | The app's name                                                                                  |
+| `%APP_VERSION%` | The App's version number                                                                        |
+| `%APP_BUILD%"`  | The App's build number                                                                          |
 
 ## Contact
 

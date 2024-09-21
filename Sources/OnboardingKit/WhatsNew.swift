@@ -68,15 +68,12 @@ public struct WhatsNew: View {
                 VStack(alignment: .leading) {
                     Text(helper.appName)
                         .fontWeight(.bold)
-                    Text("Version: \(helper.versionNumber)")
-                        .foregroundStyle(.secondary)
-
-                    Text("Build: \(helper.buildNumber)")
+                    Text("Version: \(helper.versionNumber) (\(helper.buildNumber))", bundle: .module)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Text("What's new")
+            Text("What's new", bundle: .module)
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(14)
@@ -99,7 +96,7 @@ public struct WhatsNew: View {
             }, label: {
                 HStack {
                     Spacer()
-                    Text("Continue")
+                    Text("Continue", bundle: .module)
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
