@@ -2,11 +2,24 @@ import XCTest
 @testable import OnboardingKit
 
 final class OnboardingKitTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
+    func testReplaceVariablesUsesApplicationMetadata() {
+        let helper = OnboardingKitHelper(bundle: .main)
 
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+        let result = helper.replaceVariables(
+            in: "%APP_NAME% %APP_VERSION% %APP_BUILD%"
+        )
+
+        XCTAssertFalse(result.contains("%APP_NAME%"))
+        XCTAssertFalse(result.contains("%APP_VERSION%"))
+        XCTAssertFalse(result.contains("%APP_BUILD%"))
+    }
+
+    func testReplaceVariablesLeavesUnknownVariablesUnchanged() {
+        let helper = OnboardingKitHelper(bundle: .main)
+
+        XCTAssertEqual(
+            helper.replaceVariables(in: "%UNKNOWN%"),
+            "%UNKNOWN%"
+        )
     }
 }

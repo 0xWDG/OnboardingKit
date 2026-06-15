@@ -10,81 +10,40 @@
 
 import SwiftUI
 
-#if canImport(UIKit)
-import UIKit
-#endif
-#if canImport(AppKit)
-import AppKit
-#endif
-
 /// OnboardingKit helper class
-package class OnboardingKitHelper {
+struct OnboardingKitHelper {
+    let appName: String
+    let versionNumber: String
+    let buildNumber: String
 
     /// OnboardingKit helper class
-    public init() {
-
+    init(bundle: Bundle = .main) {
+        let information = bundle.infoDictionary ?? [:]
+        appName = information["CFBundleDisplayName"] as? String
+            ?? information["CFBundleName"] as? String
+            ?? "Unknown"
+        versionNumber = information["CFBundleShortVersionString"] as? String ?? "0"
+        buildNumber = information["CFBundleVersion"] as? String ?? "0"
+        iconFileName = Self.iconFileName(in: information)
     }
 
-    /// Get application name
-    /// - Returns: application name
-    public var appName: String {
-        if let dictionary = Bundle.main.infoDictionary,
-           let dName = dictionary["CFBundleDisplayName"] as? String {
-            return dName
-        }
-
-        if let dictionary = Bundle.main.infoDictionary,
-           let dName = dictionary["CFBundleName"] as? String {
-            return dName
-        }
-
-        return "Unknown"
-    }
-
-    /// Get application version number
-    /// - Returns: application version number
-    public var versionNumber: String {
-        if let dictionary = Bundle.main.infoDictionary,
-           let dVersion = dictionary["CFBundleShortVersionString"] as? String {
-            return dVersion
-        }
-
-        return "0"
-    }
-
-    /// Get application build number
-    /// - Returns: application build number
-    public var buildNumber: String {
-        if let dictionary = Bundle.main.infoDictionary,
-           let dBuild = dictionary["CFBundleVersion"] as? String {
-            return dBuild
-        }
-
-        return "0"
-    }
+    private let iconFileName: String?
 
     /// Get application icon
     /// - Returns: Application icon
-    public var appIcon: Image {
-        guard let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
-              let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
-              let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
-              let iconFileName = iconFiles.last else {
-            fatalError("Could not find icons in bundle")
-        }
-
+    var appIcon: Image {
 #if canImport(UIKit)
-        guard let uiImage = UIImage(named: iconFileName) else {
+        guard let iconFileName, let image = UIImage(named: iconFileName) else {
             return Image(systemName: "xmark.app")
         }
 
-        return Image(uiImage: uiImage)
+        return Image(uiImage: image)
 #elseif canImport(AppKit)
-        guard let nsImage = NSImage(named: iconFileName) else {
+        guard let iconFileName, let image = NSImage(named: iconFileName) else {
             return Image(systemName: "xmark.app")
         }
 
-        return Image(nsImage: nsImage)
+        return Image(nsImage: image)
 #else
         return Image(systemName: "xmark.app")
 #endif
@@ -94,7 +53,7 @@ package class OnboardingKitHelper {
 #if os(iOS)
         return UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : "iphone"
 #elseif os(macOS)
-        return  "macbook"
+        return "macbook"
 #elseif os(visionOS)
         return "visionpro"
 #elseif os(tvOS)
@@ -108,7 +67,7 @@ package class OnboardingKitHelper {
 #if os(iOS)
         return UIDevice.current.userInterfaceIdiom == .pad ? "apps.ipad" : "apps.iphone"
 #elseif os(macOS)
-        return  "macbook"
+        return "macbook"
 #elseif os(visionOS)
         return "visionpro"
 #elseif os(tvOS)
@@ -127,12 +86,22 @@ package class OnboardingKitHelper {
     ///
     /// - Parameter string: Input string
     /// - Returns: Transformed string
-    public func replaceVariables(in string: String) -> String {
-        return string
+    func replaceVariables(in string: String) -> String {
+        string
             .replacingOccurrences(of: "%DEVICE_APPS%", with: deviceTypeApps)
             .replacingOccurrences(of: "%DEVICE_TYPE%", with: deviceType)
             .replacingOccurrences(of: "%APP_NAME%", with: appName)
             .replacingOccurrences(of: "%APP_VERSION%", with: versionNumber)
             .replacingOccurrences(of: "%APP_BUILD%", with: buildNumber)
+    }
+
+    private static func iconFileName(in information: [String: Any]) -> String? {
+        if let icons = information["CFBundleIcons"] as? [String: Any],
+           let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+           let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String] {
+            return iconFiles.last
+        }
+
+        return information["CFBundleIconFile"] as? String
     }
 }

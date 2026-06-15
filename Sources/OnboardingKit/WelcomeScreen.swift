@@ -10,35 +10,24 @@
 
 import SwiftUI
 
-#if canImport(UIKit)
-import UIKit
-#endif
-#if canImport(AppKit)
-import AppKit
-#endif
-
 /// WelcomeScreen
 ///
 /// The welcome screen for your app.
 @available(iOS 15.0, macOS 12.0, *)
 public struct WelcomeScreen: View {
-    @Binding var show: Bool
+    @Binding private var show: Bool
 
     /// Welcome screen items
-    var items: [WelcomeCell]
-
-    /// Is the welcome screen dismissable
-    var isDismissable: Bool = true
+    private var items: [WelcomeCell]
 
     /// Is the continue button available?
-    @State
-    var canContinue: Bool = false
+    @State private var canContinue: Bool
 
     /// Action to perform when the welcome screen is closed
-    var closeAction: (() -> Void)?
+    private let closeAction: (() -> Void)?
 
     /// Helper class to get the App icon, name, version and build number.
-    let helper = OnboardingKitHelper()
+    private let helper = OnboardingKitHelper()
 
     /// WelcomeScreen
     ///
@@ -57,8 +46,8 @@ public struct WelcomeScreen: View {
     ) {
         self._show = show
         self.items = items
-        self.isDismissable = isDismissable
         self.closeAction = closeAction
+        self._canContinue = State(initialValue: isDismissable)
 
         if items.isEmpty {
             self.items = [
@@ -86,9 +75,10 @@ public struct WelcomeScreen: View {
             helper.appIcon
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(.rect(cornerRadius: 8))
                 .frame(width: 82, height: 82)
                 .padding(.top, 24)
+                .accessibilityHidden(true)
 
             Text("Welcome to \(helper.appName)", bundle: .module)
                 .font(.title)
@@ -102,67 +92,43 @@ public struct WelcomeScreen: View {
                 // Lazy scrollview lets us use .onAppear
                 // to look if we are at the last item to continue.
                 LazyVStack(spacing: 24) {
-                    ForEach(items, id: \.title) { item in
-                        item.onAppear {
-                            if item.title == items.last?.title {
-                                self.canContinue = true
+                    ForEach(items) { item in
+                        item
+                            .onAppear {
+                                if item.id == items.last?.id {
+                                    canContinue = true
+                                }
                             }
-                        }
                     }
-
                 }
-                .padding(.leading)
+                .padding(.horizontal)
             }
 
             Spacer()
             Spacer()
 
-            Button(action: {
-                self.closeAction?()
-                self.show = false
-            }, label: {
-                HStack {
-                    Spacer()
-                    Text("Continue", bundle: .module)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Spacer()
-                }
-            })
-            .disabled(!canContinue)
-            .frame(height: 50)
-            .background(canContinue ? Color.blue : Color.gray)
-            .cornerRadius(15)
-#if os(iOS) || os(macOS)
-            .keyboardShortcut(canContinue ? .defaultAction : .cancelAction)
-#endif
+            OnboardingContinueButton(isEnabled: canContinue, action: dismiss)
         }
         .padding()
         .interactiveDismissDisabled(!canContinue)
-        .background {
-            Color.clear
-        }
-        .onAppear {
-            if isDismissable {
-                // View is dismissable, so we can always continue
-                canContinue = true
-            }
-        }
+    }
+
+    private func dismiss() {
+        closeAction?()
+        show = false
     }
 }
 
-struct OnboardingKit_Previews: PreviewProvider {
-    static var previews: some View {
-        WelcomeScreen(
-            show: .constant(true),
-            items: [
-                .init(
-                    image: "star",
-                    title: "Shine",
-                    subtitle: "Bright",
-                    color: .accentColor
-                )
-            ]
-        )
-    }
+#Preview {
+    WelcomeScreen(
+        show: .constant(true),
+        items: [
+            .init(
+                image: "star",
+                title: "Shine",
+                subtitle: "Bright",
+                color: .accentColor
+            )
+        ]
+    )
 }

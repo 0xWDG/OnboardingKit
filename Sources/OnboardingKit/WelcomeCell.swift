@@ -13,25 +13,25 @@ import SwiftUI
 /// WelcomeCell
 /// 
 /// A cell for the welcome screen.
-public struct WelcomeCell: View {
+@available(iOS 15.0, macOS 12.0, *)
+public struct WelcomeCell: Identifiable, View {
+    /// Stable identity for efficient list updates.
+    public let id = UUID()
 
     /// SF Symbol name
-    var image: String
+    private let image: String
 
     /// Row title
-    var title: String
+    private let title: String
 
     /// Row subtitle
-    var subtitle: String
+    private let subtitle: String
 
     /// SF Symbol color
-    var color: Color = .accentColor
+    private let color: Color
 
     /// SF Symbol rendering mode
-    var renderingMode: Image.TemplateRenderingMode?
-
-    /// Helper class to replace variables
-    let helper = OnboardingKitHelper()
+    private let renderingMode: Image.TemplateRenderingMode?
 
     /// WelcomeCell
     /// 
@@ -48,34 +48,32 @@ public struct WelcomeCell: View {
         subtitle: String,
         color: Color? = .accentColor
     ) {
-        self.image = image
-        self.title = title
-        self.subtitle = subtitle
-
-        if let color = color {
-            self.color = color
-            self.renderingMode = .template
-        }
+        let helper = OnboardingKitHelper()
+        self.image = helper.replaceVariables(in: image)
+        self.title = helper.replaceVariables(in: title)
+        self.subtitle = helper.replaceVariables(in: subtitle)
+        self.color = color ?? .accentColor
+        self.renderingMode = color == nil ? nil : .template
     }
 
     /// The view body
     public var body: some View {
         HStack(spacing: 24) {
-            Image(systemName: helper.replaceVariables(in: image))
+            Image(systemName: image)
                 .renderingMode(renderingMode)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 32)
-                .foregroundColor(color)
+                .foregroundStyle(color)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(.init(helper.replaceVariables(in: title)))
-                    .foregroundColor(.primary)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                Text(title)
+                    .foregroundStyle(.primary)
+                    .font(.headline)
 
-                Text(.init(helper.replaceVariables(in: subtitle)))
-                    .foregroundColor(.secondary)
+                Text(subtitle)
+                    .foregroundStyle(.secondary)
                     .font(.subheadline)
             }
 
@@ -89,13 +87,11 @@ public struct WelcomeCell: View {
     }
 }
 
-struct OnboardingCell_Previews: PreviewProvider {
-    static var previews: some View {
-        WelcomeCell(
-            image: "text.badge.checkmark",
-            title: "Title",
-            subtitle: "Subtitle",
-            color: .blue
-        )
-    }
+#Preview {
+    WelcomeCell(
+        image: "text.badge.checkmark",
+        title: "Title",
+        subtitle: "Subtitle",
+        color: .blue
+    )
 }
